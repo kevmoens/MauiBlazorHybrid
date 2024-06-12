@@ -1,0 +1,46 @@
+﻿@using System.Reflection
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@additionalAssemblies">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@code {
+    private Assembly? appDTasm;
+    private System.Reflection.Assembly[] additionalAssemblies =
+        {
+            typeof(App).Assembly
+            ,typeof(BlazorShared.Component1).Assembly
+    //,typeof(AppDT.Component1).Assembly
+    };
+    protected override async Task OnInitializedAsync()
+    {
+        if (appDTasm == null)
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:7159");
+                var response = await client.GetAsync("appdt");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var appDT = Convert.FromBase64String(content.Trim('"'));
+                    appDTasm = Assembly.Load(appDT);
+                    Array.Resize<Assembly>(ref additionalAssemblies, additionalAssemblies.Length + 1);
+                    additionalAssemblies[additionalAssemblies.Length - 1] = appDTasm;
+                }
+            } catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+    }
+        await base.OnInitializedAsync();
+    }
+}

@@ -1,0 +1,30 @@
+﻿@using System.Reflection
+@inherits LayoutComponentBase
+<Router AppAssembly="typeof(MainWindow).Assembly" AdditionalAssemblies="@additionalAssemblies">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(WpfBlazorHybrid.Components.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>
+
+@code {
+    private System.Reflection.Assembly[] additionalAssemblies =
+        {
+            typeof(BlazorShared.Component1).Assembly
+    };
+    protected override async Task OnInitializedAsync()
+    {
+        var client = new HttpClient();
+        client.BaseAddress = new Uri("http://localhost:5201");
+        var response = await client.GetAsync("appdt");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            var appDT = Convert.FromBase64String(content.Trim('"'));
+            var appDTasm = Assembly.Load(appDT);
+            Array.Resize<Assembly>(ref additionalAssemblies, additionalAssemblies.Length + 1);
+            additionalAssemblies[additionalAssemblies.Length - 1] = appDTasm;
+        }
+        await base.OnInitializedAsync();
+    }
+}

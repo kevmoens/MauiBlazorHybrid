@@ -1,0 +1,41 @@
+﻿@using System.Reflection
+<Router  AppAssembly="@typeof(MauiProgram).Assembly" AdditionalAssemblies="@additionalAssemblies">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Components.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+</Router>
+
+@code {
+    private System.Reflection.Assembly[] additionalAssemblies =
+        {
+            typeof(BlazorShared.Component1).Assembly
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            string content = await LoadAppDT();
+            var appDT = Convert.FromBase64String(content.Trim('"'));
+            var appDTasm = Assembly.Load(appDT);
+            Array.Resize<Assembly>(ref additionalAssemblies, additionalAssemblies.Length + 1);
+            additionalAssemblies[additionalAssemblies.Length - 1] = appDTasm;
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+        }
+        await base.OnInitializedAsync();
+    }
+    private async Task<string> LoadAppDT()
+    {
+        var client = new HttpClient();
+        //client.BaseAddress = new Uri("https://10.0.2.2:7159");
+        client.BaseAddress = new Uri("http://10.0.2.2:5201");
+        var response = await client.GetAsync("appdt");
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadAsStringAsync();        
+        }
+        return string.Empty;
+    }
+}
