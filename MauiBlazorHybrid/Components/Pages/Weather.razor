@@ -1,8 +1,11 @@
 ﻿@page "/weather"
+@using HybridCoupling.Native.App
+@inject IMessageBox messageBox
 
 <h1>Weather</h1>
-
-<p>This component demonstrates showing data.</p>
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="ShowMessage"/>
+<MudButton Variant="Variant.Filled" Color="Color.Primary">Execute Tests</MudButton>
+<p>This component demonstrates showing data on MAUI.</p>
 
 @if (forecasts == null)
 {
@@ -57,5 +60,10 @@ else
         public int TemperatureC { get; set; }
         public string? Summary { get; set; }
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+    public async void ShowMessage()
+    {
+        await messageBox.Show("MAUI Test");
     }
 }

@@ -1,4 +1,24 @@
 ﻿@page "/component1"
+@using HybridCoupling.Native.App
+@inject IMessageBox messageBox
+@inject ExampleDTJsInterop jsInterop //Havn't figured out how to register this... notes on AssemblyLoadContext and possibly autofac
 <div class="my-component">
     This shared component is defined in the <strong>AppDT</strong> library.
 </div>
+
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="ShowMessage"/>
+<MudButton Variant="Variant.Filled" Color="Color.Primary">Execute Tests</MudButton>
+
+
+
+@code {
+
+    public async void ShowMessage()
+    {
+        await messageBox.Show("AppDB Test");
+    }
+    public async void InteropMessage()
+    {
+        await jsInterop.Prompt("AppDB Test");
+    }
+}

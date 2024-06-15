@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using BlazorShared;
+using HybridCoupling.Native.App;
+using MauiBlazorHybrid.Coupling.App;
+using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 
 namespace MauiBlazorHybrid
 {
@@ -15,9 +19,12 @@ namespace MauiBlazorHybrid
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddMudServices();
+            builder.Services.AddBlazorShared();
+            builder.Services.AddTransient<IMessageBox, MauiMessageBox>();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
 

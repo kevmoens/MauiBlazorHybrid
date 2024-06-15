@@ -1,10 +1,15 @@
 ﻿@page "/counter"
 @inject NavigationManager navigationManager
+@inject ExampleJsInterop sharedJsInterop
 <h1>Shared Counter</h1>
 
 <p>Shared Current count: @currentCount</p>
 
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
+<MudButton Variant="Variant.Filled" Color="Color.Primary">Execute Tests</MudButton>
+
 <button class="btn btn-primary" @onclick="NavigateToComponent1">Navigate</button>
+<button class="btn btn-primary" @onclick="NavigateToComponent2">Test Shared Interop</button>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
@@ -51,5 +56,11 @@
     private void NavigateToComponent1()
     {
         navigationManager.NavigateTo("/component1");
+    }
+    private async void NavigateToComponent2()
+    {
+        string result = await sharedJsInterop.Prompt("Hello from Blazor");
+        System.Console.WriteLine(result);
+
     }
 }

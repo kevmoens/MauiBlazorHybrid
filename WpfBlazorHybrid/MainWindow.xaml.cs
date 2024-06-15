@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.WebView.Wpf;
+﻿using BlazorShared;
+using HybridCoupling.Native.App;
+using Microsoft.AspNetCore.Components.WebView.Wpf;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfBlazorHybrid.Coupling.App;
 
 namespace WpfBlazorHybrid
 {
@@ -27,6 +31,9 @@ namespace WpfBlazorHybrid
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWpfBlazorWebView();
+            serviceCollection.AddBlazorShared();
+            serviceCollection.AddMudServices();
+            serviceCollection.AddTransient<IMessageBox, WpfMessageBox>();
             Resources.Add("services", serviceCollection.BuildServiceProvider());
 
 
